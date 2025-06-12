@@ -1,0 +1,43 @@
+# custom-values.yaml
+
+replicaCount: 2
+
+image:
+  repository: your-dockerhub-username/ghl-mcp-server
+  tag: latest
+  pullPolicy: Always
+
+env:
+  GHL_API_KEY: "your_private_integrations_api_key"  # Required
+  GHL_LOCATION_ID: "your_location_id"               # Required
+  GHL_BASE_URL: "https://services.leadconnectorhq.com"
+  NODE_ENV: "production"
+  PORT: 8000
+  LOG_LEVEL: "info"
+  CORS_ORIGINS: "*"
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 60
+
+service:
+  type: LoadBalancer
+  port: 80
+  targetPort: 8000
+  annotations: {}
+    # Example for AWS: service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+
+resources:
+  limits:
+    cpu: 2000m
+    memory: 1Gi
+  requests:
+    cpu: 500m
+    memory: 512Mi
+
+ingress:
+  enabled: true
+  host: your-ghl-mcp.example.com       # Your domain name
+  tlsSecret: ghl-mcp-tls-secret        # Name of the Kubernetes TLS secret containing your cert and key
